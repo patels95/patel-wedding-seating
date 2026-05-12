@@ -40,13 +40,13 @@ const TABLES = {
 
 Defined as CSS variables in `styles.css`:
 
-| Variable          | Value       | Usage                        |
-|-------------------|-------------|------------------------------|
-| `--oxblood`       | `#4A0E0E`   | Header, result card bg       |
-| `--gold`          | `#B8973A`   | Accents, borders, dividers   |
-| `--gold-light`    | `#D4AF5A`   | Table number in result card  |
-| `--cream`         | `#FAF7F2`   | Page background              |
-| `--warm-white`    | `#FDF9F4`   | Search section, tab bar      |
+| Variable       | Value     | Usage                       |
+| -------------- | --------- | --------------------------- |
+| `--oxblood`    | `#4A0E0E` | Header, result card bg      |
+| `--gold`       | `#B8973A` | Accents, borders, dividers  |
+| `--gold-light` | `#D4AF5A` | Table number in result card |
+| `--cream`      | `#FAF7F2` | Page background             |
+| `--warm-white` | `#FDF9F4` | Search section, tab bar     |
 
 Fonts: **Cormorant Garamond** (display/headings) + **Jost** (body). Both via Google Fonts.
 
@@ -62,7 +62,7 @@ Fonts: **Cormorant Garamond** (display/headings) + **Jost** (body). Both via Goo
 Hosted on GitHub Pages. Pushes to `main` deploy automatically.
 
 Live URL: `https://patels95.github.io/patel-wedding-seating`
-Short URL (Bitly): `bit.ly/dhiralsanam` *(update once created)*
+Short URL (Bitly): `bit.ly/dhiralsanam` _(update once created)_
 QR code generated from the Bitly short URL — not the GitHub URL directly.
 
 ## Key Constraints

@@ -1,62 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Dhiral & Sanam — Seating</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
-  <h1><span>Dhiral</span> &amp; <span>Sanam</span></h1>
-  <div class="header-date">May 30, 2026 &nbsp;·&nbsp; The Ballantyne, Charlotte</div>
-</div>
-
-<!-- SEARCH -->
-<div class="search-section">
-  <span class="search-label">Find your seat</span>
-  <div class="search-wrap">
-    <input
-      type="text"
-      class="search-input"
-      id="searchInput"
-      placeholder="Enter your name…"
-      autocomplete="off"
-      autocorrect="off"
-      spellcheck="false"
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
-    <span class="search-icon">⌕</span>
-  </div>
-</div>
+    <title>Dhiral & Sanam — Seating</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+      <h1><span>Dhiral</span> &amp; <span>Sanam</span></h1>
+      <div class="header-date">
+        May 30, 2026 &nbsp;·&nbsp; The Ballantyne, Charlotte
+      </div>
+    </div>
 
-<!-- RESULT -->
-<div id="resultCard" class="hidden"></div>
+    <!-- SEARCH + RESULT (sticky) -->
+    <div class="sticky-bar">
+      <div class="search-section">
+        <span class="search-label">Find your seat</span>
+        <div class="search-wrap">
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Enter your name…"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          />
+          <span class="search-icon">⌕</span>
+        </div>
+      </div>
+      <div id="resultCard" class="hidden"></div>
+    </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" id="tabGrid" onclick="switchTab('grid')">All Tables</div>
-</div>
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" id="tabGrid" onclick="switchTab('grid')">
+        All Tables
+      </div>
+    </div>
 
-<!-- TABLES GRID -->
-<div class="tables-grid" id="tablesGrid"></div>
+    <!-- TABLES GRID -->
+    <div class="tables-grid" id="tablesGrid"></div>
 
-<!-- TABLE DETAIL OVERLAY -->
-<div class="table-detail hidden" id="tableDetail">
-  <div class="table-detail-header">
-    <button class="back-btn" onclick="closeDetail()">←</button>
-    <div class="table-detail-title" id="detailTitle"></div>
-  </div>
-  <div class="table-detail-guests" id="detailGuests"></div>
-</div>
+    <!-- TABLE DETAIL OVERLAY -->
+    <div class="table-detail hidden" id="tableDetail">
+      <div class="table-detail-header">
+        <button class="back-btn" onclick="closeDetail()">←</button>
+        <div class="table-detail-title" id="detailTitle"></div>
+      </div>
+      <div class="table-detail-guests" id="detailGuests"></div>
+    </div>
 
-<!-- FOOTER -->
-<div class="footer">The Ballantyne Hotel &nbsp;·&nbsp; Charlotte, NC</div>
+    <!-- FOOTER -->
+    <div class="footer">The Ballantyne Hotel &nbsp;·&nbsp; Charlotte, NC</div>
 
-<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
