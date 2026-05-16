@@ -16,19 +16,20 @@ No backend. No build step. Plain HTML, CSS, JS.
 ```
 index.html    — markup and layout
 styles.css    — all styles (CSS variables, components, animations)
-script.js     — seating data + search logic + DOM rendering
+seating.json  — seating data — edit this for guest changes
+script.js     — search logic + DOM rendering
 ```
 
 ## Updating the Seating Data
 
-All guest data lives in the `TABLES` object at the top of `script.js`:
+All guest data lives in `seating.json`:
 
-```js
-const TABLES = {
+```json
+{
   "1": ["First Last", "First Last", ...],
   "2": [...],
   ...
-};
+}
 ```
 
 - Keys are table numbers as strings
