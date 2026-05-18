@@ -11,7 +11,8 @@ function init(TABLES) {
       if (!name) return;
       const displayName = name.replace(/\s*\(.*?\)/g, "").trim();
       const key = normalize(displayName);
-      lookup[key] = {
+      if (!lookup[key]) lookup[key] = [];
+      lookup[key].push({
         table: tableNum,
         displayName,
         tablemates: guests
@@ -19,51 +20,74 @@ function init(TABLES) {
             (g) => g && normalize(g.replace(/\s*\(.*?\)/g, "").trim()) !== key,
           )
           .map((g) => g.replace(/\s*\(.*?\)/g, "").trim()),
-      };
+      });
     });
   });
 
   // ── SEARCH ──
   const searchInput = document.getElementById("searchInput");
   const resultCard = document.getElementById("resultCard");
+  const tablematesBar = document.getElementById("tablematesBar");
 
   let matches = [];
   let matchIndex = 0;
+  let currentMatchHasTablemates = false;
+  const stickyBar = document.querySelector(".sticky-bar");
+
+  function syncTablematesBar() {
+    if (!currentMatchHasTablemates) return;
+    const cardBottom = resultCard.getBoundingClientRect().bottom;
+    const barBottom = stickyBar.getBoundingClientRect().bottom;
+    tablematesBar.classList.toggle("hidden", cardBottom > barBottom);
+  }
+
+  window.addEventListener("scroll", syncTablematesBar, { passive: true });
+
+  function dismissCard() {
+    currentMatchHasTablemates = false;
+    resultCard.classList.add("hidden");
+    tablematesBar.classList.add("hidden");
+    matches = [];
+    matchIndex = 0;
+  }
 
   searchInput.addEventListener("input", () => {
     const val = searchInput.value.trim();
     if (val.length < 2) {
-      resultCard.classList.add("hidden");
-      matches = [];
-      matchIndex = 0;
+      dismissCard();
       return;
     }
     matches = findGuests(val);
     matchIndex = 0;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     renderResult();
   });
 
   function findGuests(query) {
     const q = normalize(query);
-    if (lookup[q]) return [lookup[q]];
+    if (lookup[q]) return lookup[q];
     const keys = Object.keys(lookup);
     const startsWith = keys.filter((k) => k.startsWith(q));
     const contains = keys.filter((k) => k.includes(q) && !k.startsWith(q));
-    return [...startsWith, ...contains].map((k) => lookup[k]);
+    return [...startsWith, ...contains].flatMap((k) => lookup[k]);
   }
 
   function renderResult() {
     const match = matches[matchIndex];
     const total = matches.length;
 
+    currentMatchHasTablemates = false;
+    tablematesBar.classList.add("hidden");
     resultCard.classList.remove("hidden");
 
     if (!match) {
       resultCard.className = "result-card not-found";
       resultCard.innerHTML = `
+        <button class="dismiss-btn" id="dismissCard">&#x2715;</button>
         <div class="not-found-msg">Name not found</div>
         <div class="not-found-sub">Try a different spelling, or scroll below to find your table.</div>
       `;
+      document.getElementById("dismissCard").addEventListener("click", dismissCard);
       return;
     }
 
@@ -72,9 +96,9 @@ function init(TABLES) {
     const navHtml =
       total > 1
         ? `<div class="result-nav">
-           <button class="nav-btn" id="prevMatch">&#8592;</button>
+           <button class="nav-btn" id="prevMatch"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 1.5L3 5l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
            <span class="nav-indicator">${matchIndex + 1} of ${total}</span>
-           <button class="nav-btn" id="nextMatch">&#8594;</button>
+           <button class="nav-btn" id="nextMatch"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 1.5L7 5l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
          </div>`
         : "";
 
@@ -86,6 +110,7 @@ function init(TABLES) {
       : "";
 
     resultCard.innerHTML = `
+      <button class="dismiss-btn" id="dismissCard">&#x2715;</button>
       ${navHtml}
       <div class="result-label">Welcome</div>
       <div class="result-name">${match.displayName}</div>
@@ -93,6 +118,24 @@ function init(TABLES) {
       <div class="result-table-word">Your Table</div>
       ${tmHtml}
     `;
+
+    document.getElementById("dismissCard").addEventListener("click", dismissCard);
+
+    if (match.tablemates.length) {
+      currentMatchHasTablemates = true;
+      tablematesBar.innerHTML = `
+        <div class="tablemates-bar-table-section">
+          <div class="tablemates-bar-table-label">Table</div>
+          <div class="tablemates-bar-table">${match.table}</div>
+        </div>
+        <div class="tablemates-bar-center">
+          <div class="tablemates-bar-label">Also at your table</div>
+          <div class="tablemates-bar-names">${match.tablemates.join(" &nbsp;·&nbsp; ")}</div>
+        </div>
+        <button class="tablemates-bar-dismiss" id="tablematesDismiss">&#x2715;</button>
+      `;
+      document.getElementById("tablematesDismiss").addEventListener("click", dismissCard);
+    }
 
     if (total > 1) {
       document.getElementById("prevMatch").addEventListener("click", () => {
