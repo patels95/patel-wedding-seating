@@ -34,11 +34,40 @@ function init(TABLES) {
   let currentMatchHasTablemates = false;
   const stickyBar = document.querySelector(".sticky-bar");
 
+  // Keep sticky bar pinned to the visual viewport when the mobile keyboard is open.
+  // position:sticky is relative to the layout viewport, which doesn't shrink on iOS
+  // when the keyboard opens, causing the bar to scroll off the visible area.
+  let pinBar = () => {};
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    const initialVVHeight = vv.height;
+    const spacer = document.createElement("div");
+    stickyBar.insertAdjacentElement("afterend", spacer);
+
+    pinBar = function () {
+      if (vv.height < initialVVHeight - 50) {
+        spacer.style.height = stickyBar.offsetHeight + "px";
+        stickyBar.style.position = "fixed";
+        stickyBar.style.top = vv.offsetTop + "px";
+        stickyBar.style.width = "100%";
+      } else {
+        spacer.style.height = "";
+        stickyBar.style.position = "";
+        stickyBar.style.top = "";
+        stickyBar.style.width = "";
+      }
+    };
+
+    vv.addEventListener("resize", pinBar);
+    vv.addEventListener("scroll", pinBar);
+  }
+
   function syncTablematesBar() {
     if (!currentMatchHasTablemates) return;
     const cardBottom = resultCard.getBoundingClientRect().bottom;
     const barBottom = stickyBar.getBoundingClientRect().bottom;
     tablematesBar.classList.toggle("hidden", cardBottom > barBottom);
+    pinBar();
   }
 
   window.addEventListener("scroll", syncTablematesBar, { passive: true });
@@ -180,8 +209,9 @@ function openDetail(num, guests) {
     )
     .join("");
   document.getElementById("detailGuests").innerHTML = guestHtml;
-  document.getElementById("tableDetail").classList.remove("hidden");
-  window.scrollTo(0, 0);
+  const detail = document.getElementById("tableDetail");
+  detail.scrollTop = 0;
+  detail.classList.remove("hidden");
 }
 
 function closeDetail() {
