@@ -34,47 +34,19 @@ function init(TABLES) {
   let currentMatchHasTablemates = false;
   const stickyBar = document.querySelector(".sticky-bar");
 
-  // Keep sticky bar pinned to the visual viewport when the mobile keyboard is open.
-  // position:sticky is relative to the layout viewport, which doesn't shrink on iOS
-  // when the keyboard opens, causing the bar to scroll off the visible area.
-  let pinBar = () => {};
+  // While pinch-zoomed, drop the bar's stickiness so the enlarged bar doesn't
+  // cover the zoomed table list. We intentionally do NOT reposition the bar
+  // against window.visualViewport while the keyboard is open: chasing offsetTop
+  // on every scroll event made the bar jitter and leave whitespace on overscroll
+  // on iOS. The interactive-widget viewport hint resizes the layout for the
+  // keyboard so native position:sticky keeps the bar in place instead.
   if (window.visualViewport) {
     const vv = window.visualViewport;
-    const initialVVHeight = vv.height;
-    const header = document.querySelector(".header");
-    const spacer = document.createElement("div");
-    stickyBar.insertAdjacentElement("afterend", spacer);
-
-    pinBar = function () {
-      const zoomed = vv.scale > 1.01;
-      const keyboardOpen = vv.height < initialVVHeight - 50;
-      const headerVisible = header.getBoundingClientRect().bottom > 0;
-
-      if (zoomed) {
-        // Pinch-zoom shrinks the visual viewport (which would otherwise read as
-        // the keyboard opening). Drop stickiness so the bar scrolls away with the
-        // page instead of floating over and covering the zoomed table list.
-        spacer.style.height = "";
-        stickyBar.style.position = "static";
-        stickyBar.style.top = "";
-        stickyBar.style.width = "";
-      } else if (keyboardOpen && !headerVisible) {
-        // Pin to the visual viewport only after the header scrolls off, so the bar
-        // never covers the header or pushes the result card down with a gap.
-        spacer.style.height = stickyBar.offsetHeight + "px";
-        stickyBar.style.position = "fixed";
-        stickyBar.style.top = vv.offsetTop + "px";
-        stickyBar.style.width = "100%";
-      } else {
-        spacer.style.height = "";
-        stickyBar.style.position = "";
-        stickyBar.style.top = "";
-        stickyBar.style.width = "";
-      }
+    const handleZoom = () => {
+      stickyBar.style.position = vv.scale > 1.01 ? "static" : "";
     };
-
-    vv.addEventListener("resize", pinBar);
-    vv.addEventListener("scroll", pinBar);
+    vv.addEventListener("resize", handleZoom);
+    vv.addEventListener("scroll", handleZoom);
   }
 
   function syncTablematesBar() {
@@ -82,7 +54,6 @@ function init(TABLES) {
     const cardBottom = resultCard.getBoundingClientRect().bottom;
     const barBottom = stickyBar.getBoundingClientRect().bottom;
     tablematesBar.classList.toggle("hidden", cardBottom > barBottom);
-    pinBar();
   }
 
   window.addEventListener("scroll", syncTablematesBar, { passive: true });
