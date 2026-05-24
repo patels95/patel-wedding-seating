@@ -595,6 +595,26 @@ body {
   opacity: 0.6;
 }
 
+/* ── DATA LOAD ERROR ── */
+.load-error {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.load-error-msg {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.load-error-sub {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
 /* ── FOOTER ── */
 .footer {
   padding: 24px 20px;

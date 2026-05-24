@@ -222,5 +222,16 @@ function switchTab(t) {
 }
 
 fetch("seating.json")
-  .then((r) => r.json())
-  .then(init);
+  .then((r) => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  })
+  .then(init)
+  .catch(() => {
+    document.getElementById("tablesGrid").innerHTML = `
+      <div class="load-error">
+        <div class="load-error-msg">Couldn't load the seating list</div>
+        <div class="load-error-sub">Please check your connection and refresh the page.</div>
+      </div>
+    `;
+  });
