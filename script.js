@@ -46,12 +46,21 @@ function init(TABLES) {
     stickyBar.insertAdjacentElement("afterend", spacer);
 
     pinBar = function () {
+      const zoomed = vv.scale > 1.01;
       const keyboardOpen = vv.height < initialVVHeight - 50;
       const headerVisible = header.getBoundingClientRect().bottom > 0;
 
-      // Pin to the visual viewport only after the header scrolls off, so the bar
-      // never covers the header or pushes the result card down with a gap.
-      if (keyboardOpen && !headerVisible) {
+      if (zoomed) {
+        // Pinch-zoom shrinks the visual viewport (which would otherwise read as
+        // the keyboard opening). Drop stickiness so the bar scrolls away with the
+        // page instead of floating over and covering the zoomed table list.
+        spacer.style.height = "";
+        stickyBar.style.position = "static";
+        stickyBar.style.top = "";
+        stickyBar.style.width = "";
+      } else if (keyboardOpen && !headerVisible) {
+        // Pin to the visual viewport only after the header scrolls off, so the bar
+        // never covers the header or pushes the result card down with a gap.
         spacer.style.height = stickyBar.offsetHeight + "px";
         stickyBar.style.position = "fixed";
         stickyBar.style.top = vv.offsetTop + "px";
