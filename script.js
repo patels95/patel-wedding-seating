@@ -241,6 +241,7 @@ function switchTab(t) {
     .classList.add("active");
 }
 
-fetch("seating.json")
+// Revalidate against the server on every load so seating edits never serve stale.
+fetch("seating.json", { cache: "no-cache" })
   .then((r) => r.json())
   .then(init);
