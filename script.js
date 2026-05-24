@@ -98,6 +98,14 @@ function init(TABLES) {
     renderResult();
   });
 
+  // Dismiss the keyboard when the guest presses Enter; search is already live.
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchInput.blur();
+    }
+  });
+
   function findGuests(query) {
     const q = normalize(query);
     if (lookup[q]) return lookup[q];
