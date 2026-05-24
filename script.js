@@ -58,23 +58,27 @@ function init(TABLES) {
         stickyBar.style.position = "static";
         stickyBar.style.top = "";
         stickyBar.style.width = "";
+        stickyBar.style.transform = "";
+        stickyBar.style.willChange = "";
       } else if (keyboardOpen && !headerVisible) {
-        // Pin to the visual viewport only after the header scrolls off, so the bar
-        // never covers the header or pushes the result card down with a gap.
+        // Pin to the visual viewport once the header scrolls off. Follow the
+        // viewport with a compositor-only transform instead of animating `top`,
+        // so scrolling with the keyboard open stays smooth on iOS.
         spacer.style.height = stickyBar.offsetHeight + "px";
         stickyBar.style.position = "fixed";
-        stickyBar.style.top = vv.offsetTop + "px";
+        stickyBar.style.top = "0";
         stickyBar.style.width = "100%";
+        stickyBar.style.willChange = "transform";
+        stickyBar.style.transform = "translateY(" + vv.offsetTop + "px)";
       } else {
         spacer.style.height = "";
         stickyBar.style.position = "";
         stickyBar.style.top = "";
         stickyBar.style.width = "";
+        stickyBar.style.transform = "";
+        stickyBar.style.willChange = "";
       }
     };
-
-    vv.addEventListener("resize", pinBar);
-    vv.addEventListener("scroll", pinBar);
   }
 
   function syncTablematesBar() {
@@ -82,10 +86,28 @@ function init(TABLES) {
     const cardBottom = resultCard.getBoundingClientRect().bottom;
     const barBottom = stickyBar.getBoundingClientRect().bottom;
     tablematesBar.classList.toggle("hidden", cardBottom > barBottom);
-    pinBar();
   }
 
-  window.addEventListener("scroll", syncTablematesBar, { passive: true });
+  // Coalesce scroll/resize work into a single rAF callback. The mobile keyboard
+  // fires visualViewport scroll events rapidly; doing layout reads/writes on each
+  // one stutters scrolling (and makes the focused caret jump) on smaller iPhones.
+  // pinBar runs first so the bar is positioned before syncTablematesBar measures it.
+  let updateScheduled = false;
+  function scheduleViewportUpdate() {
+    if (updateScheduled) return;
+    updateScheduled = true;
+    requestAnimationFrame(() => {
+      updateScheduled = false;
+      pinBar();
+      syncTablematesBar();
+    });
+  }
+
+  window.addEventListener("scroll", scheduleViewportUpdate, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("scroll", scheduleViewportUpdate);
+    window.visualViewport.addEventListener("resize", scheduleViewportUpdate);
+  }
 
   function dismissCard() {
     currentMatchHasTablemates = false;
