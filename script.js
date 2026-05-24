@@ -41,11 +41,17 @@ function init(TABLES) {
   if (window.visualViewport) {
     const vv = window.visualViewport;
     const initialVVHeight = vv.height;
+    const header = document.querySelector(".header");
     const spacer = document.createElement("div");
     stickyBar.insertAdjacentElement("afterend", spacer);
 
     pinBar = function () {
-      if (vv.height < initialVVHeight - 50) {
+      const keyboardOpen = vv.height < initialVVHeight - 50;
+      const headerVisible = header.getBoundingClientRect().bottom > 0;
+
+      // Pin to the visual viewport only after the header scrolls off, so the bar
+      // never covers the header or pushes the result card down with a gap.
+      if (keyboardOpen && !headerVisible) {
         spacer.style.height = stickyBar.offsetHeight + "px";
         stickyBar.style.position = "fixed";
         stickyBar.style.top = vv.offsetTop + "px";
