@@ -462,10 +462,6 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 7px;
-  /* Keep the grid on its own compositor layer so the soft-keyboard viewport
-     resize re-uses its cached pixels instead of repainting it blank for a
-     frame (the cream flash over the tables on Android Chrome). */
-  transform: translateZ(0);
 }
 
 .table-card {

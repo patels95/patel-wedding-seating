@@ -35,11 +35,7 @@ function init(TABLES) {
   const stickyBar = document.querySelector(".sticky-bar");
 
   // While pinch-zoomed, drop the bar's stickiness so the enlarged bar doesn't
-  // cover the zoomed table list. We intentionally do NOT reposition the bar
-  // against window.visualViewport while the keyboard is open: chasing offsetTop
-  // on every scroll event made the bar jitter and leave whitespace on overscroll
-  // on iOS. The interactive-widget viewport hint resizes the layout for the
-  // keyboard so native position:sticky keeps the bar in place instead.
+  // cover the zoomed table list.
   if (window.visualViewport) {
     const vv = window.visualViewport;
     const handleZoom = () => {
